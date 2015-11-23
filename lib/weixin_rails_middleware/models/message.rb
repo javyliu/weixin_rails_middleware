@@ -1,9 +1,4 @@
 # encoding: utf-8
-# ref: https://github.com/wolfg1969/rack-weixin/lib/weixin/model.rb
-require 'roxml'
-require 'multi_xml'
-require 'ostruct'
-
 # multi_xml will use Nokogiri if it is available
 MultiXml.parser = :nokogiri
 
@@ -44,8 +39,10 @@ module WeixinRailsMiddleware
         VoiceMessage.new(hash)
       when 'video'
         VideoMessage.new(hash)
+      when 'shortvideo'
+        ShortVideo.new(hash)
       else
-        raise ArgumentError, 'Unknown Message'
+        raise ArgumentError, 'Unknown Weixin Message'
       end
     end
 
@@ -150,6 +147,27 @@ module WeixinRailsMiddleware
   #   <MsgId>5912593687824566343</MsgId>
   # </xml>
   class VideoMessage < Message
+
+    def MediaId
+      @source.MediaId
+    end
+
+    def ThumbMediaId
+      @source.ThumbMediaId
+    end
+  end
+
+  # <xml>
+  #   <ToUserName><![CDATA[toUser]]></ToUserName>
+  #   <FromUserName><![CDATA[fromUser]]></FromUserName>
+  #   <CreateTime>1357290913</CreateTime>
+  #   <MsgType><![CDATA[shortvideo]]></MsgType>
+  #   <MediaId><![CDATA[media_id]]></MediaId>
+  #   <ThumbMediaId><![CDATA[thumb_media_id]]></ThumbMediaId>
+  #   <MsgId>1234567890123456</MsgId>
+  # </xml>
+
+  class ShortVideo < Message
 
     def MediaId
       @source.MediaId
